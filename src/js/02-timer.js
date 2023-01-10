@@ -15,10 +15,28 @@ const refs = {
 refs.startBtn.setAttribute('disabled', 'true');
 refs.startBtn.addEventListener('click', onStartTimer);
 
+
+
 function onStartTimer() {
-    let insertDate = refs.inputDate.value;
-    let currentDate = new Date;
-    console.log(currentDate)
+  Notify.success('The timer has started');
+  let insertDate = new Date(refs.inputDate.value); 
+  
+  let timerId = setInterval(() => {
+    let countdown = insertDate - new Date();
+    let dateObject = convertMs(countdown);
+
+    if(countdown>0){
+    refs.days.textContent = addLeadingZero(dateObject.days);
+    refs.hours.textContent = addLeadingZero(dateObject.hours);
+    refs.minutes.textContent = addLeadingZero(dateObject.minutes);
+    refs.seconds.textContent = addLeadingZero(dateObject.seconds); 
+    }else if (countdown <= 0) {
+      Notify.success('The timer has ended');
+      clearInterval(timerId)
+    }
+
+
+   }, 1000);
 }
 
 const options = {
@@ -50,4 +68,8 @@ function convertMs(ms) {
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
+}
+
+function addLeadingZero(value) {
+  return String(value).padStart(2,"0");
 }
